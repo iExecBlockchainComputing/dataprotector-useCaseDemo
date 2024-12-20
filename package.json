@@ -23,6 +23,7 @@
     "@fontsource/space-mono": "^5.0.20",
     "@iexec/dataprotector": "^2.0.0-beta.10",
     "@iexec/web3mail": "^1.1.0",
+    "@iexec/web3telegram": "file:../web3telegram-sdk",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-select": "^2.1.1",

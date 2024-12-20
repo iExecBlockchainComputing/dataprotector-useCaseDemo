@@ -243,7 +243,7 @@ export default function OneProtectedData() {
 
         {modalOpen && (
           <GrantAccessModal
-            protectedData={protectedDataAddress as string}
+            protectedData={protectedData!}
             open={modalOpen}
             onOpenChange={(open: boolean) => {
               if (!open) {

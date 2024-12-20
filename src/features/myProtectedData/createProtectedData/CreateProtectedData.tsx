@@ -29,11 +29,15 @@ export default function CreateProtectedData() {
 
   //for name et dataType
   const [name, setName] = useState('');
-  const [dataType, setDataType] = useState<'email' | 'file'>();
+  const [dataType, setDataType] = useState<'email' | 'telegram' | 'file'>();
 
   //for email
   const [email, setEmail] = useState('');
   const [isValidEmail, setIsValidEmail] = useState(true);
+
+  //for telegram chat id
+  const [telegram, setTelegram] = useState('');
+  const [isValidTelegram, setIsValidTelegram] = useState(true);
 
   //for file
   const [filePath, setFilePath] = useState('');
@@ -45,15 +49,22 @@ export default function CreateProtectedData() {
   const onChangeDataType = (chosenDataType: 'email' | 'file') => {
     setDataType(chosenDataType);
   };
+
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
     setIsValidEmail(event.target.validity.valid);
+  };
+
+  const handleTelegramChange = (event: any) => {
+    setTelegram(event.target.value);
+    setIsValidTelegram(event.target.validity.valid);
   };
 
   const handleFileChange = (event: any) => {
     setFilePath(event.target.value);
     setFile(event.target.files?.[0]);
   };
+
   const handleNameChange = (event: any) => {
     setName(event.target.value);
   };
@@ -67,6 +78,7 @@ export default function CreateProtectedData() {
       name: string;
       data: {
         email?: string;
+        chatId?: string;
         file?: Uint8Array;
       };
     }) => {
@@ -87,12 +99,16 @@ export default function CreateProtectedData() {
 
     const data: {
       email?: string;
+      chatId?: string;
       file?: Uint8Array;
     } = {};
     let bufferFile: Uint8Array;
     switch (dataType) {
       case 'email':
         data.email = email;
+        break;
+      case 'telegram':
+        data.chatId = telegram;
         break;
       case 'file':
         if (!file) {
@@ -111,6 +127,7 @@ export default function CreateProtectedData() {
       !dataType ||
       !name ||
       (dataType === 'email' && !email.trim()) ||
+      (dataType === 'telegram' && !telegram.trim()) ||
       (dataType === 'file' && !file)
     ) {
       toast({
@@ -124,6 +141,14 @@ export default function CreateProtectedData() {
       toast({
         variant: 'danger',
         title: 'Please enter a valid email address',
+      });
+      return;
+    }
+
+    if (dataType === 'telegram' && !!telegram && !isValidTelegram) {
+      toast({
+        variant: 'danger',
+        title: 'Please enter a valid telegram chat ID',
       });
       return;
     }
@@ -160,6 +185,9 @@ export default function CreateProtectedData() {
                 <SelectItem value="email" data-cy="email-address-select-item">
                   Email Address
                 </SelectItem>
+                <SelectItem value="telegram" data-cy="telegram-select-item">
+                  Telegram
+                </SelectItem>
                 <SelectItem value="file" data-cy="file-select-item">
                   File
                 </SelectItem>
@@ -180,6 +208,62 @@ export default function CreateProtectedData() {
                 />
               </div>
             )}
+
+            {dataType === 'telegram' && (
+              <div className="mt-6">
+                <Label htmlFor="telegram">Telegram Chat ID *</Label>
+                <Input
+                  id="telegram"
+                  data-cy="telegram-input"
+                  type="text"
+                  value={telegram}
+                  placeholder="0123456789"
+                  aria-label="Telegram Chat ID"
+                  className="mt-1"
+                  onChange={handleTelegramChange}
+                />
+                <div className="relative flex justify-between p-4">
+                  <div>
+                    <span className="">
+                      Initiate a conversation with the bot
+                      <Link
+                        to="https://t.me/Web3Telegram_Bot"
+                        className="font-semibold text-blue-700"
+                      >
+                        {' '}
+                        @Web3Telegram_Bot{' '}
+                      </Link>
+                      or you will be unable to receive messages.
+                    </span>
+                    <br />
+                    <br />
+                    <span className="">
+                      You can retrieve your{' '}
+                      <span className="font-semibold">chat ID</span> using the
+                      following bot :
+                      <Link
+                        to="https://t.me/getmyid_bot"
+                        className="font-semibold text-blue-700"
+                      >
+                        {' '}
+                        @getmyid_bot{' '}
+                      </Link>
+                      on Telegram.
+                    </span>
+                  </div>
+                  <a
+                    href="https://beta.tools.docs.iex.ec/tools/web3mail/getting-started.html"
+                    target="_blank"
+                  >
+                    <span className="absolute bottom-0 right-0 rounded-xl bg-primary p-2">
+                      {' '}
+                      Learn more{' '}
+                    </span>
+                  </a>
+                </div>
+              </div>
+            )}
+
             {dataType === 'file' && (
               <Button
                 variant="secondary"

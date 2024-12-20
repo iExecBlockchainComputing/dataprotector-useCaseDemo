@@ -72,6 +72,12 @@ export default function NavBar() {
         >
           Send Email
         </NavLink>
+        <NavLink
+          to={`/sendTelegram`}
+          className="-mx-2 flex h-full items-center p-2"
+        >
+          Send Telegram
+        </NavLink>
         <div
           className="absolute bottom-0 h-1 rounded-md bg-white transition-all duration-300"
           style={{ width: tabIndicatorWidth, left: tabIndicatorLeft }}

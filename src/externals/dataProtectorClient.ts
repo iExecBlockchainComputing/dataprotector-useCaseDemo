@@ -25,7 +25,18 @@ export async function initDataProtectorSDK({
     return;
   }
 
-  const dataProtectorParent = new IExecDataProtector(provider);
+  // --- With debug SMS
+  const iexecOptions = {
+    smsURL: 'https://sms.scone-debug.v8-bellecour.iex.ec',
+  };
+  const dataProtectorParent = new IExecDataProtector(provider, {
+    iexecOptions,
+  });
+  console.log('👉 Using debug SMS');
+
+  // --- With prod SMS
+  // const dataProtectorParent = new IExecDataProtector(provider);
+  // console.log('👉 Using prod SMS');
 
   dataProtector = dataProtectorParent.core;
   dataProtectorSharing = dataProtectorParent.sharing;

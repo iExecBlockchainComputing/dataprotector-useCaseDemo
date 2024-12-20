@@ -6,6 +6,8 @@ import CreateProtectedData from '@/features/myProtectedData/createProtectedData/
 import OneProtectedData from '@/features/myProtectedData/oneProtectedData/OneProtectedData.tsx';
 import MyEmailContacts from '@/features/sendEmail/MyEmailContacts.tsx';
 import SendEmailForm from '@/features/sendEmail/SendEmailForm.tsx';
+import MyTelegramContacts from '@/features/sendTelegram/MyTelegramContacts.tsx';
+import SendTelegramForm from '@/features/sendTelegram/SendTelegramForm.tsx';
 import { useWatchWagmiAccount } from '@/utils/watchWagmiAccount.ts';
 
 function App() {
@@ -53,6 +55,22 @@ function App() {
             element={
               <LoginGuard>
                 <SendEmailForm />
+              </LoginGuard>
+            }
+          />
+          <Route
+            path="sendTelegram"
+            element={
+              <LoginGuard>
+                <MyTelegramContacts />
+              </LoginGuard>
+            }
+          />
+          <Route
+            path="/sendTelegram/:receiverAddress/:protectedDataAddress"
+            element={
+              <LoginGuard>
+                <SendTelegramForm />
               </LoginGuard>
             }
           />

@@ -1,5 +1,5 @@
 import { useUserStore } from '@/stores/user.store.ts';
-import { WorkflowError } from '@iexec/dataprotector';
+import { ProtectedData, WorkflowError } from '@iexec/dataprotector';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ZeroAddress } from 'ethers';
 import { type FormEvent, useState } from 'react';
@@ -15,11 +15,15 @@ import {
 import { Input } from '@/components/ui/input.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { useToast } from '@/components/ui/use-toast.ts';
-import { WEB3MAIL_IDAPPS_WHITELIST_SC } from '@/config/config.ts';
+import {
+  WEB3MAIL_IAPPS_WHITELIST_SC,
+  WEB3TELEGRAM_IAPP_ADDRESS,
+} from '@/config/config.ts';
 import { getDataProtectorClient } from '@/externals/dataProtectorClient.ts';
+import { isKeyInDataSchema } from '@/utils/utils.ts';
 
 type GrantAccessModalParams = {
-  protectedData: string;
+  protectedData: ProtectedData;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -50,9 +54,23 @@ export default function GrantAccessModal(props: GrantAccessModalParams) {
     mutationKey: ['grantAccess'],
     mutationFn: async () => {
       const { dataProtector } = await getDataProtectorClient();
+
+      let appOrWhitelistAddress = '';
+      if (isKeyInDataSchema(props.protectedData.schema, 'email')) {
+        appOrWhitelistAddress = WEB3MAIL_IAPPS_WHITELIST_SC;
+      } else if (isKeyInDataSchema(props.protectedData.schema, 'chatId')) {
+        appOrWhitelistAddress = WEB3TELEGRAM_IAPP_ADDRESS;
+      } else {
+        // appOrWhitelistAddress = ''; // TODO Put delivery iApp here?
+        throw new Error(
+          "Can't grant access to a file. Not sure which iApp to use..."
+        );
+      }
+      console.log('appOrWhitelistAddress', appOrWhitelistAddress);
+
       return dataProtector.grantAccess({
-        protectedData: props.protectedData,
-        authorizedApp: WEB3MAIL_IDAPPS_WHITELIST_SC,
+        protectedData: props.protectedData.address,
+        authorizedApp: appOrWhitelistAddress,
         authorizedUser: ethAddress,
         numberOfAccess: nbOfAccess,
       });
